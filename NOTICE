@@ -1,0 +1,44 @@
+D3-ONNX-CPU
+
+This repository converts the Decision 3.0 models d3-edge, d3-lite, d3-nano and d3-mini of the vLLM Semantic Router Team
+(https://huggingface.co/vllm-sr) to ONNX and provides a minimal-dependency inference implementation for them. The ONNX files
+(released separately, not stored in this repository) are derivative works of those checkpoints:
+
+  - exported from the checkpoints at the revisions pinned in export/models.py (the weights are converted from bf16 to fp32 without
+    other change; the readout matrix is folded into the decoder graph; the attention masks the vendor's runtime adds with a forward
+    hook are built inside the graph; the decoder is exported once per fixed sequence length with the weights shared between them);
+  - this repository's source code (d3_decide/, export/, verify/, tests/, demos) is a new implementation, written to reproduce
+    the behaviour of the vendor's runtime (d3_runtime.py, d3_format.py), which is not copied here.
+
+The original checkpoints are licensed under the Apache License, Version 2.0 (see LICENSE-VLLM-SR, the vendor's text unchanged).
+Their notices, reproduced verbatim:
+
+  ---- vllm-sr/d3-edge NOTICE ----
+  d3-edge (Decision 3.0)
+  Copyright 2026 vLLM Semantic Router Team
+
+  Built on Qwen/Qwen3.5-0.8B (Apache-2.0).
+
+  ---- vllm-sr/d3-lite NOTICE ----
+  d3-lite (Decision 3.0)
+  Copyright 2026 vLLM Semantic Router Team
+
+  Built on Qwen/Qwen3.5-0.8B (Apache-2.0).
+
+  ---- vllm-sr/d3-nano NOTICE ----
+  d3-nano (Decision 3.0)
+  Copyright 2026 vLLM Semantic Router Team
+
+  Built on Qwen/Qwen3.5-2B (Apache-2.0).
+
+  ---- vllm-sr/d3-mini NOTICE ----
+  d3-mini (Decision 3.0)
+  Copyright 2026 vLLM Semantic Router Team
+
+  Built on Qwen/Qwen3.5-4B (Apache-2.0).
+
+The base models Qwen/Qwen3.5-0.8B, Qwen/Qwen3.5-2B and Qwen/Qwen3.5-4B (Alibaba Cloud) are licensed under the Apache License,
+Version 2.0 as well.
+
+The providers of the original models do not endorse this conversion or warrant how it behaves. The model cards do not describe the
+training data.

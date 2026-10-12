@@ -1,0 +1,40 @@
+[project]
+name = "d3-onnx-cpu"
+version = "0.1.0"
+description = "vllm-sr d3-edge / d3-lite / d3-nano (Decision 3.0, typed decisions over text and pictures) with onnxruntime + tokenizers + numpy: no torch, no transformers. CPU, and GPU when onnxruntime-gpu is installed"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+# Runtime. That is the whole list. pillow is only imported when a request carries images.
+dependencies = [
+    "tokenizers>=0.20",
+    "numpy>=1.26",
+    "pillow>=10.0",
+]
+
+[project.optional-dependencies]
+# GPU (CUDA 13 + cuDNN 9). onnxruntime and onnxruntime-gpu write into the same directory and must NOT be installed together, so the
+# CPU build is the dependency group "cpu" (installed by default) and the two exclude each other:
+#   CPU:  uv sync
+#   GPU:  uv sync --extra gpu --no-group cpu        (then run with `uv run --no-sync ...`)
+gpu = ["onnxruntime-gpu>=1.20"]
+
+[dependency-groups]
+cpu = ["onnxruntime>=1.20"]
+# Only for export/ and the oracle gates in verify/ that need the reference model. Never imported at runtime.
+export = [
+    "torch>=2.6",
+    "torchvision>=0.21",
+    "transformers==5.17.0",
+    "onnx>=1.17",
+    "onnxscript>=0.1",
+    "safetensors>=0.6",
+    "huggingface_hub>=1.0",
+    "accelerate>=1.10",
+]
+
+# Not a package to build: the code is run from the checkout (`uv run demo_inference_text.py`).
+[tool.uv]
+package = false
+default-groups = ["cpu"]
+conflicts = [[{ extra = "gpu" }, { group = "cpu" }]]
